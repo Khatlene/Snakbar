@@ -1,0 +1,207 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-signin-login {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #B17D25;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: bold;
+}
+
+/* ✅ Popover styling */
+/* Center the popover in the middle of the screen */
+#createAccountPopover:popover-open {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  z-index: 999;
+}
+
+.popover {
+    border: 1px solid #ccc;
+    position: absolute;
+    margin-top: 130px;
+    width: 400px;
+    height: 500px;
+    border-radius: 10px;
+}
+.popover h3 {
+    font-family: "Josefin Sans", sans-serif;
+    font-size: 2rem;
+    position: relative;
+    top: 30px;
+    left: 10px;
+}
+
+.create-form {
+    position: relative;
+    top: 40px;
+}
+
+.create-form label {
+    display: block;
+    margin: 20px 0 5px 20px;
+    font-family: "Josefin Sans", sans-serif;
+    font-weight: bold;
+}
+.create-form input {
+    width: 90%;
+    padding: 10px;
+    margin: 5px 20px 15px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+/* 🌙 Dim Background When Popover Opens */
+#accountPopover::backdrop {
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black overlay */
+}
+
+/* Center the popover when open */
+#accountPopover:popover-open {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #B17D25, #d4a343);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+  position: relative;
+  width: 360px;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  background: linear-gradient(135deg, #a06c1f, #c08e33);
+  transform: translateY(-2px);
+}
+
+/* ✨ Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.title {
+  color: #B17D25;
+  font-family: "Josefin Sans", sans-serif;
+  position: relative;
+  top: 40px;
+}
+
+.search-bar {
+  position: relative;
+  top: 70px;
+  width: 600px;
+  height: 50px;
+  border-radius: 50px;
+  background-color: white;
+  border: 1px solid lightgray;
+  padding-left: 20px;
+}
+.nav-2 {
+  display: flex;
+  position: relative;
+  top: 100px;
+  background-color: wheat;
+  border-radius: 10px;
+  width: 1000px;
+  height: 40px;
+  justify-content: center;
+  justify-self: center;
+}
+
+.nav-2 ul {
+  list-style: none;
+  margin: 20px 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 150px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.nav-2 ul li a {
+  text-decoration: none;
+  color: black;
+  font-family: "Josefin Sans", sans-serif;
+  font-weight: bold;
+}
+
+.nav-2 ul li a:focus {
+  color: #B17D25;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  gap: 60px;
+  margin-left: -10px;
+  width: 1000px;
+
+}
+.cards h1{
+  font-size: 1.3rem;
+}
+.btn-add-to-cart{
+  width: 200px;
+  height: 50px;
+  background-color: black;
+  color: white;
+  }
+  .product-image {
+  width: 100px;
+  height: 200px;
+  background-image: url("Images/image.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+}
+.product-name {
+  font-family: "Josefin Sans", sans-serif;  
+  position: relative;
+  top: 5px;
+  left: 10px;
+}
+.product-name h1 {
+  font-size: 1.2rem;
+  color: white;
+}
+.product-name h2{
+  font-size: 1rem;
+  color: white;
+  position: relative;
+  top: -30px;
+}
+
+.div2,.div3,.div4,.div5,.div6,.div7,.div8 {
+  display: flex;
+  
+  
+}

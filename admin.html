@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Panel</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #ededed;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .nav {
+      width: 250px;
+      background-color: #ffffff;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 30px;
+      position: fixed;
+      height: 100vh;
+    }
+
+    .Logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      margin-bottom: 30px;
+    }
+
+    .nav ul {
+      list-style: none;
+      width: 100%;
+    }
+
+    .nav ul li {
+      padding: 15px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 5px solid transparent;
+    }
+
+    .nav ul li:hover {
+      background-color: #ff7043;
+      color: white;
+      border-left: 5px solid #b22222;
+    }
+
+    .nav ul li.active {
+      background-color: #b22222;
+      color: white;
+      border-left: 5px solid #ff7043;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 40px;
+      flex-grow: 1;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dashboard */
+    .dashboard-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 280px;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card h2 { color: #b22222; margin-bottom: 10px; }
+    .card p { font-size: 32px; font-weight: bold; color: #333; }
+
+    .chart-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+      max-width: 900px;
+    }
+
+    /* Orders */
+    .orders-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table thead {
+      background-color: #b22222;
+      color: white;
+    }
+
+    tr:hover { background: #f9f9f9; }
+
+    /* Products */
+    .product-container {
+
+      padding: 30px;
+    }
+
+    .add-product-btn {
+      background-color: #b22222;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: 0.3s;
+    }
+
+    .add-product-btn:hover { background-color: #ff7043; }
+
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 200px;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .product-card h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .product-card p {
+      color: #b22222;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .remove-btn {
+      background-color: #ccc;
+      border: none;
+      color: #333;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.3s;
+    }
+
+    .remove-btn:hover {
+      background-color: #ff7043;
+      color: white;
+    }
+
+    /* Popup Form */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup.active { display: flex; }
+
+    .popup-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 400px;
+    }
+
+    .popup-content h2 {
+      text-align: center;
+      color: #b22222;
+      margin-bottom: 15px;
+    }
+
+    .popup-content label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .popup-content input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .popup-content img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    .popup-buttons {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .popup-buttons button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .popup-buttons .save { background-color: #b22222; color: white; margin-right: 10px; }
+    .popup-buttons .cancel { background-color: #ccc; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="nav">
+    <img class="Logo" src="Images/logo.png" alt="Logo" />
+    <ul>
+      <li class="active" data-panel="dashboard">🏠 Dashboard</li>
+      <li data-panel="orders">🛒 Orders</li>
+      <li data-panel="products">📦 Products</li>
+      <li data-panel="Accounts">@ Accounts</li>
+    </ul>
+  </div>
+  <div id="Accounts">
+    
+  </div>
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Dashboard -->
+    <div class="panel active" id="dashboard">
+      <h1>Welcome to Your Dashboard</h1>
+      <div class="dashboard-cards">
+        <div class="card"><h2>Products Sold Today</h2><p>27</p></div>
+        <div class="card"><h2>Products Sold This Month</h2><p>458</p></div>
+        <div class="card"><h2>Products Sold Annually</h2><p>5320</p></div>
+      </div>
+      <div class="chart-container">
+        <h2 style="color:#b22222;margin-bottom:15px;">Sales Overview</h2>
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="panel" id="orders">
+      <h1>Orders</h1>
+      <div class="orders-container">
+        <table>
+          <thead>
+            <tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Items</th><th>Total (₱)</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>#1001</td><td>Juan Dela Cruz</td><td>Oct 22, 2025</td><td>3</td><td>₱1,250</td><td style="color:green;">Completed</td></tr>
+            <tr><td>#1002</td><td>Maria Santos</td><td>Oct 22, 2025</td><td>5</td><td>₱2,700</td><td style="color:orange;">Pending</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="panel" id="products">
+      <h1>Products</h1>
+      <button class="add-product-btn" id="addProductBtn">➕ Add Product</button>
+
+      <div class="product-container">
+        <div class="product-list" id="productList">
+          <div class="product-card">
+            <img src="Images/product1.jpg" alt="Product">
+            <h3>Chocolate Cake</h3>
+            <p>₱250</p>
+            <button class="remove-btn">Cancel</button>
+          </div>
+          <div class="product-card">
+            <img src="Images/product2.jpg" alt="Product">
+            <h3>Strawberry Tart</h3>
+            <p>₱180</p>
+            <button class="remove-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product Popup -->
+  <div class="popup" id="popupForm">
+    <div class="popup-content">
+      <h2>Add New Product</h2>
+      <label>Product Name</label>
+      <input type="text" id="productName">
+
+      <label>Price (₱)</label>
+      <input type="number" id="productPrice">
+
+      <label>Upload Image</label>
+      <input type="file" id="productImage" accept="image/*">
+      <img id="previewImage" src="" alt="Preview" style="display:none;">
+
+      <div class="popup-buttons">
+        <button class="save" id="saveProduct">Save</button>
+        <button class="cancel" id="cancelProduct">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar Switching
+    document.querySelectorAll(".nav ul li").forEach(item => {
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".nav ul li").forEach(i => i.classList.remove("active"));
+        item.classList.add("active");
+        const panelId = item.getAttribute("data-panel");
+        document.querySelectorAll(".panel").forEach(p => {
+          p.classList.remove("active");
+          if (p.id === panelId) p.classList.add("active");
+        });
+      });
+    });
+
+    // Chart.js
+    const ctx = document.getElementById("salesChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Today", "This Month", "Annually"],
+        datasets: [{ 
+          data: [5400, 72800, 899000],
+          backgroundColor: ["#ff7043","#b22222","#ffab91"],
+          borderRadius: 10
+        }]
+      },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Product Popup
+    const popupForm = document.getElementById("popupForm");
+    const addBtn = document.getElementById("addProductBtn");
+    const cancelBtn = document.getElementById("cancelProduct");
+    const saveBtn = document.getElementById("saveProduct");
+    const productList = document.getElementById("productList");
+    const imageInput = document.getElementById("productImage");
+    const preview = document.getElementById("previewImage");
+
+    addBtn.onclick = () => popupForm.classList.add("active");
+    cancelBtn.onclick = () => {
+      popupForm.classList.remove("active");
+      preview.style.display = "none";
+    };
+
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.src = e.target.result;
+          preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    saveBtn.onclick = () => {
+      const name = document.getElementById("productName").value;
+      const price = document.getElementById("productPrice").value;
+      if (!name || !price || !preview.src) {
+        alert("Please fill out all fields.");
+        return;
+      }
+      const newCard = document.createElement("div");
+      newCard.classList.add("product-card");
+      newCard.innerHTML = `
+        <img src="${preview.src}" alt="Product">
+        <h3>${name}</h3>
+        <p>₱${price}</p>
+        <button class="remove-btn">Cancel</button>
+      `;
+      productList.appendChild(newCard);
+      popupForm.classList.remove("active");
+      preview.style.display = "none";
+      document.getElementById("productName").value = "";
+      document.getElementById("productPrice").value = "";
+      imageInput.value = "";
+    };
+
+    // Remove Button for Products
+    function activateRemoveButtons() {
+      document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.onclick = () => btn.closest(".product-card").remove();
+      });
+    }
+
+    // Activate on start and after new product added
+    activateRemoveButtons();
+    document.addEventListener("click", e => {
+      if (e.target.classList.contains("remove-btn")) e.target.closest(".product-card").remove();
+    });
+  </script>
+</body>
+</html>

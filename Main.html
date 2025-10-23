@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Snackbar</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: rgb(237, 237, 237);
+    }
+    .Label-logo {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 3rem;
+      color: #333;
+      text-align: left;
+      margin-top: 25px;
+      margin-left: 15px;
+      position: fixed;
+    }
+    .Tagline {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 1.2rem;
+      color: #333;
+      text-align: left;
+      margin-top: 10px;
+      margin-left: 17px;
+      position: fixed;
+    }
+    .Menu-links {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      margin-top: 50px;
+      margin-left: 10px;
+      position: fixed;
+    }
+
+    .Menu-links ul {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+      height: 40px;
+      width: 200px;
+    }
+
+    .Menu-links li {
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: 0.3s;
+      cursor: pointer;
+      background-color: orangered;
+      padding: 15px 35px;
+      border-radius: 50px;
+    }
+
+    .Menu-links li:hover {
+      background-color: rgb(255, 230, 0);
+      color: black;
+      transform: scale(1.05);
+    }
+    .Menu-links li:focus {
+      background-color: #fff04d;
+      color: black;
+    }
+    .Login {
+      width: 120px;
+      position: absolute;
+      top: 30px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: orangered;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .Cart {
+      width: 40px;
+      height: 40px;
+      padding: 10px;
+      background-color: orangered;
+      border-radius: 50%;
+      position: absolute;
+      top: 30px;
+      right: 170px;
+      cursor: pointer;
+    }
+    .Cart:hover {
+      background-color: #ffb84d;
+    }
+    .product-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 40px;
+      margin-left: 10px;
+      height: 300px;
+      width: 230px;
+      text-align: left;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 15px;
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .product-header h3 {
+      font-size: 1rem;
+      color: #333;
+      margin: 0;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      color: #ff6600;
+      font-weight: bold;
+    }
+
+    .add-to-cart {
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+      width: 100%;
+    }
+
+    .add-to-cart:hover {
+      background-color: #ff8533;
+    }
+
+    .container {
+      display: none;
+      gap: 20px;
+      width: 1400px;
+      height: 600px;
+      scroll-behavior: smooth;
+      flex-wrap: wrap;
+      margin: 20px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: fixed;
+      scrollbar-color: #333 white;
+    }
+    
+    .container.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cart-section {
+      margin-top: 40px;
+      position: fixed;
+      right: 0;
+      top: -50px;
+      padding: 20px;
+      background: #F5F5DC;
+      border-radius: 10px;
+      width: 500px;
+      height: 900px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      color: white;
+    }
+
+    .cart-item img {
+      width: 250px;
+      height: 100px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+
+    .cart-info h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: #333;
+      font-style: 'Josefin Sans', sans-serif;
+    }
+
+    .cart-info p {
+      margin: 2px 0;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .quantity-control button {
+      background-color: white;
+      border: none;
+      color: #ff6600;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .quantity-control button:hover {
+      background-color: yellow;
+      color: black;
+    }
+
+    .quantity-value {
+      font-weight: bold;
+      font-size: 1rem;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .summary-buy {
+      text-align: center;
+      position: fixed;
+      width: 500px;
+      height: 150px;
+      border-top: 2px solid white;
+      margin: 0;
+      bottom: 20px;
+    }
+    .summary-buy h3 {
+      margin: 10px 0;
+      font-size: 1.5rem;
+      text-align: end;
+      color: #333;
+      font-style: 'Josefin Sans', sans-serif;
+    }
+    .summary-buy .checkout-btn {
+      background-color: orangered;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+      width: 90%;
+      height: 40px;
+    }
+    .summary-buy .checkout-btn:hover {
+      background-color: #ff8533;
+    }
+    .summary-buy .checkout-btn:active {
+      background-color: #fff04d;
+      color: black;
+    }
+
+    /* Fixed Order Form Popup (single definition) */
+    .order-form {
+      display: none; /* hidden by default */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      z-index: 9999;
+      width: 800px;
+      height: 600px;
+      text-align: left;
+      max-height: 90vh;
+      overflow-y: auto;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .order-form h2 {
+      margin-top: 0;
+      color: #ff6600;
+      text-align: center;
+      width: 100%;
+    }
+
+    .order-form .form-section {
+      flex: 1;
+    }
+
+    .order-form .cart-section-form {
+      flex: 1;
+      border-left: 2px solid #ddd;
+      padding-left: 20px;
+    }
+
+    .order-form input, .order-form textarea {
+      width: 300px;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      outline: #ff6600;
+    }
+
+    .order-form button {
+      background: orangered;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .order-form button:hover {
+      background: #ff8533;
+    }
+
+    .order-items {
+      margin-top: 10px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+
+    .order-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .order-item img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .overlay {
+      display: none; /* hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+    }
+    .methods-to-pay {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+
+.methods-to-pay label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+  color: #444;
+}
+
+.payment-options input[type="radio"] {
+  accent-color: orangered; /* modern browsers */
+  transform: scale(1.1);
+}
+
+.payment-options input[type="radio"]:hover {
+  transform: scale(1.2);
+}
+
+  </style>
+</head>
+<body>
+  <h1 class="Label-logo">Snack<span style="color: #ff6600;">bar</span></h1>
+  <br><br><br><br>
+  <p class="Tagline">Your favorite snacks, delivered fast!</p>
+  <br>
+  <div class="Menu-links">
+    <ul>
+      <li onclick="openPanel('all')">all</li>
+      <li onclick="openPanel('snacks')">Snacks</li>
+      <li onclick="openPanel('beverages')">Beverages</li>
+      <li onclick="openPanel('desserts')">Desserts</li>
+      <li onclick="openPanel('specials')">Specials</li>
+      <li onclick="openPanel('contact')"><img src="Images/menu.png" style="width: 20px; height: 20px;"></li>
+    </ul>
+  </div>
+  <br><br><br><br><br><br><br><br>
+
+  <!-- Snacks -->
+  <div class="container active" id="all">
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/The Ultimate Homemade Onion Rings Recipe – Crispy….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Onion Rings</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/Photo crispy french fries with ketchup i….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>french fries</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card">
+      <img src="Images/Introduction Homemade chicken nuggets have long….jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Chicken nuggets</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="Images/HAMBÚRGUER.jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Hamburger</h3>
+          <div class="price">$3.99</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Beverages -->
+  <div class="container" id="beverages">
+    <div class="product-card">
+      <img src="Images/Gordon Ramsey_.jpg" alt="Product Image">
+      <div class="product-info">
+        <div class="product-header">
+          <h3>Cold Drinks</h3>
+          <div class="price">$2.50</div>
+        </div>
+        <button class="add-to-cart">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART -->
+  <div class="cart-section">
+    <h2 style="color: #333;">Your Cart</h2>
+    <div class="cart-items"></div>
+    <div class="summary-buy">
+      <h3 id="totalDisplay" style="color: #333;">Total: $0.00</h3>
+      <br>
+      <button class="checkout-btn" onclick="openOrderForm()">Order Now ></button>
+    </div>
+  </div>
+
+  <!-- Overlay and Order Form -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ORDER FORM (replace your current .order-form block with this) -->
+<div class="order-form" id="orderForm" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="form-section">
+    <h2>Complete Your Order</h2>
+
+    <label class="field">
+      <span class="field-label">Full Name</span>
+      <input type="text" id="name" placeholder="Full Name" required>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Delivery Address</span>
+      <input type="text" id="address" placeholder="Delivery Address" required>
+    </label><br>
+
+    <label class="field">
+      <span class="field-label">Contact Number</span>
+      <input type="text" id="contact" placeholder="Contact Number" required>
+    </label>
+
+    <label class="field">
+      <span class="field-label"> (optional)</span>
+      <textarea id="notes" placeholder="Additional Notes (optional)"></textarea>
+    </label>
+
+    <div class="methods-to-pay">
+      <div class="pay-label">Payment Method</div>
+
+      <div class="payment-options">
+        <label class="pay-option">
+          <input type="radio" name="payment" value="cod" required>
+          <div class="pay-text">
+            <div class="pay-title">Cash on Delivery</div>
+            <div class="pay-sub">Pay in cash when delivered</div>
+          </div>
+        </label>
+
+        <label class="pay-option">
+          <input type="radio" name="payment" value="gcash">
+          <div class="pay-text">
+            <div class="pay-title">GCash</div>
+            <div class="pay-sub">Pay via mobile wallet</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="submit-order" onclick="submitOrder()">Submit Order</button>
+  </div>
+
+  <div class="cart-section-form">
+    <h3 style="font-family: 'Josefin Sans', sans-serif;">Your Items</h3>
+    <div class="order-items" id="orderItems"></div>
+  </div>
+</div>
+
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const addToCartButtons = document.querySelectorAll(".add-to-cart");
+      const cartItemsContainer = document.querySelector(".cart-items");
+      const totalDisplay = document.getElementById("totalDisplay");
+
+      addToCartButtons.forEach(button => {
+        button.addEventListener("click", function() {
+          const productCard = button.closest(".product-card");
+          const productName = productCard.querySelector("h3").textContent;
+          const productPrice = productCard.querySelector(".price").textContent;
+          const productImage = productCard.querySelector("img").src;
+
+          let existingItem = Array.from(cartItemsContainer.children).find(item => 
+            item.querySelector("h4")?.textContent === productName
+          );
+
+          if (existingItem) {
+            const qtyElement = existingItem.querySelector(".quantity-value");
+            qtyElement.textContent = parseInt(qtyElement.textContent) + 1;
+          } else {
+            const cartItem = document.createElement("div");
+            cartItem.classList.add("cart-item");
+            cartItem.innerHTML = `
+              <img src="${productImage}" alt="${productName}">
+              <div class="cart-info">
+                <h4>${productName}</h4>
+                <p>${productPrice}</p>
+                <div class="quantity-control">
+                  <button class="decrease">‹</button>
+                  <span class="quantity-value">1</span>
+                  <button class="increase">›</button>
+                </div>
+              </div>
+            `;
+            cartItemsContainer.appendChild(cartItem);
+
+            const decreaseBtn = cartItem.querySelector(".decrease");
+            const increaseBtn = cartItem.querySelector(".increase");
+            const quantityValue = cartItem.querySelector(".quantity-value");
+
+            decreaseBtn.addEventListener("click", () => {
+              let currentQty = parseInt(quantityValue.textContent);
+              if (currentQty > 1) {
+                quantityValue.textContent = currentQty - 1;
+              } else {
+                cartItem.remove();
+              }
+              updateTotal();
+            });
+
+            increaseBtn.addEventListener("click", () => {
+              quantityValue.textContent = parseInt(quantityValue.textContent) + 1;
+              updateTotal();
+            });
+          }
+
+          updateTotal();
+        });
+      });
+
+      function updateTotal() {
+        let total = 0;
+        const cartItems = cartItemsContainer.querySelectorAll(".cart-item");
+        cartItems.forEach(item => {
+          const priceText = item.querySelector("p").textContent.replace('$', '');
+          const price = parseFloat(priceText);
+          const qty = parseInt(item.querySelector(".quantity-value").textContent);
+          total += price * qty;
+        });
+        totalDisplay.textContent = `Total: $${total.toFixed(2)}`;
+      }
+
+      // close overlay by clicking it
+      const overlay = document.getElementById("overlay");
+      overlay.addEventListener("click", function() {
+        document.getElementById("orderForm").style.display = "none";
+        overlay.style.display = "none";
+      });
+    });
+
+    function openPanel(id) {
+      const containers = document.querySelectorAll('.container');
+      containers.forEach(container => container.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+    }
+
+    // Show Order Form + display cart items
+    function openOrderForm() {
+      const orderItemsContainer = document.getElementById("orderItems");
+      orderItemsContainer.innerHTML = "";
+
+      const cartItems = document.querySelectorAll(".cart-item");
+      cartItems.forEach(item => {
+        const imgSrc = item.querySelector("img").src;
+        const name = item.querySelector("h4").textContent;
+        const price = item.querySelector("p").textContent;
+        const qty = item.querySelector(".quantity-value").textContent;
+
+        const orderItem = document.createElement("div");
+        orderItem.classList.add("order-item");
+        orderItem.innerHTML = `
+          <img src="${imgSrc}" alt="${name}">
+          <div>
+            <p><strong>${name}</strong></p>
+            <p>${price} × ${qty}</p>
+            
+          </div>
+        `;
+        orderItemsContainer.appendChild(orderItem);
+      });
+
+      document.getElementById("orderForm").style.display = "flex";
+      document.getElementById("overlay").style.display = "block";
+    }
+
+    function submitOrder() {
+      const name = document.getElementById("name").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const contact = document.getElementById("contact").value.trim();
+
+      if (!name || !address || !contact) {
+        alert("Please fill in all required fields!");
+        return;
+      }
+
+      alert("Thank you, " + name + "! Your order has been submitted successfully.");
+      document.getElementById("orderForm").style.display = "none";
+      document.getElementById("overlay").style.display = "none";
+    }
+
+
+
+    
+  </script>
+</body>
+</html>

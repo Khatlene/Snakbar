@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Address Autocomplete</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .autocomplete-container {
+      position: relative;
+      width: 350px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+    }
+
+    .suggestions {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+    }
+
+    .suggestion-item {
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .suggestion-item:hover {
+      background: #f1f1f1;
+    }
+
+    .no-result {
+      padding: 10px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="autocomplete-container">
+    <input type="text" id="addressInput" placeholder="Enter your address...">
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+
+  <script>
+    const suggestionsBox = document.getElementById('suggestions');
+    const addressInput = document.getElementById('addressInput');
+
+    // Sample address database (you can expand this)
+    const addresses = [
+      "Batangas, Poblacion, San Nicolas",
+      "Batangas, Maabud north, San Nicolas",
+      "Batangas, Maabud south, San Nicolas",
+      "Batangas, Baluk balok, San Nicolas",
+      "Batangas, Balete,  San Nicolas",
+      "Batangas, Calangay, San Nicolas",
+      "Batangas, Sinturisan, San Nicolas",
+      "Batangas, Bangin, San Nicolas",
+      "Batangas, Alas as, San Nicolas"
+    ];
+
+    addressInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      suggestionsBox.innerHTML = '';
+
+      if (query.length === 0) {
+        suggestionsBox.style.display = 'none';
+        return;
+      }
+
+      const filtered = addresses.filter(addr => addr.toLowerCase().includes(query));
+
+      if (filtered.length === 0) {
+        suggestionsBox.innerHTML = '<div class="no-result">No suggestions found</div>';
+        suggestionsBox.style.display = 'block';
+      } else {
+        filtered.forEach(addr => {
+          const item = document.createElement('div');
+          item.classList.add('suggestion-item');
+          item.textContent = addr;
+          item.addEventListener('click', () => {
+            addressInput.value = addr;
+            suggestionsBox.innerHTML = '';
+            suggestionsBox.style.display = 'none';
+          });
+          suggestionsBox.appendChild(item);
+        });
+        suggestionsBox.style.display = 'block';
+      }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.autocomplete-container')) {
+        suggestionsBox.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

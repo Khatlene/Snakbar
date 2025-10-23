@@ -1,0 +1,183 @@
+<?php
+
+require('connection.php');
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = trim($_POST['username']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO account_creadted (username, password) VALUES (?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+
+    if (mysqli_stmt_execute($stmt)) {
+        header("Location: Main.php?registered=1");
+        exit();
+    } else {
+        $error = "Username already exists!";
+    }
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Images/pexels-chanwalrus-958545.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    .Card {
+      position: fixed;
+      width: 400px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    .logo-createaccount {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    .Create-acc h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .Create-acc label {
+      font-size: 14px;
+      color: #444;
+    }
+
+    .Create-acc input[type="text"],
+    .Create-acc input[type="password"] {
+      width: 100%;
+      height: 35px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .Create-acc .btn-submit {
+      width: 100%;
+      height: 40px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .Create-acc .btn-submit:hover {
+      background-color: #45a049;
+    }
+
+    .terms {
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .terms a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+
+    .terms a:hover {
+      text-decoration: underline;
+    }
+    .Login-ways {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      gap: 20px;
+      padding-bottom: 25px;
+    }
+    .Card span {
+      display: inline-block;
+      font-size: 2rem;
+      color: #4CAF50;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .Card span:hover {
+      transform: scale(1.5);
+      transition: transform 0.3s;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="Card">
+    <img src="Images/user.png" alt="Snackbar Logo" class="logo-createaccount">
+    <a href="">
+      <span style="position: absolute;
+    top: 80px;
+    right: 42%;
+    width: 10px;
+    height: 10px;
+    
+    
+    font-size: 2rem;">+</span>
+    </a>
+    <div class="Create-acc">
+      <h2>Create your Account</h2>
+      <form action="Main.html" method="">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" required><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br>
+
+        <center><label>------other ways------</label></center><br>
+
+      
+          <div class="Login-ways">
+            <img class=" "x src="Images/search.png" alt="Google Logo" style="width:30px; height:30px; cursor: pointer; margin-right: 10px;">
+            <img class=" " src="Images/communication.png" alt="Communication Logo" style="width:30px; height:30px; cursor: pointer; margin-right: 10px;">
+            <img class=" " src="Images/twitter.png" alt="Twitter Logo" style="width:30px; height:30px; cursor: pointer; margin-right: 10px;">
+        </div>
+      
+        <div class="terms">
+          <input type="checkbox" id="agree" required>
+          <label for="agree">I agree to the <a href="#">Terms and Conditions</a></label>
+        </div>
+    
+        <a href="Main.html"><button type="submit" class="btn-submit">Sign Up</button></a>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
